@@ -52,4 +52,33 @@ Random Forest avec GridSearchCV — R² ≈ 0.74, MAE ≈ 10.76 €/jour. Le pre
 
 ---
 
+## Structure
+
+```
+Deployment-GetAround/
+├── data/
+│   ├── get_around_delay_analysis.xlsx
+│   └── get_around_pricing_project.csv
+├── notebooks/
+│   └── getaround_eda.ipynb
+├── FastAPI/
+│   ├── api.py
+│   ├── model.joblib
+│   ├── preprocessor.joblib
+│   ├── requirements.txt
+│   └── Dockerfile
+├── Streamlit/
+│   ├── app.py
+│   ├── data_calc.py
+│   ├── requirements.txt
+│   └── Dockerfile
+├── MLflow/
+│   ├── train.py
+│   ├── requirements.txt
+│   └── Dockerfile
+└── README.md
+```
+
+---
+
 Julien CHARLIER — [(Github : Atomik31)](https://github.com/Atomik31)

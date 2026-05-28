@@ -1,0 +1,8 @@
+# Ignore run.sh file with credentials
+run.sh
+
+# Ignore any .env files (common for storing credentials)
+*.env
+
+# Ignore other sensitive files
+sensitive-data.txt

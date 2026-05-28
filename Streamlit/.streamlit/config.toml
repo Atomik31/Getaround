@@ -1,0 +1,18 @@
+[browser]
+serverAddress = '0.0.0.0'
+
+[theme]
+# Primary accent (Orange ocre vif pour contraster)
+primaryColor = '#D48145' 
+
+# Background color (Gris ardoise sombre)
+backgroundColor = '#2B2B30' 
+
+# Sidebar and widgets (Gris encore plus profond)
+secondaryBackgroundColor = '#1F1F24' 
+
+# Text color (Blanc cassé / gris très clair)
+textColor = '#E0E0E0' 
+
+# Font family
+font = "sans serif"

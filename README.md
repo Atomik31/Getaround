@@ -1,3 +1,5 @@
+![GetAround](GetAround_logo.png)
+
 # GetAround — Retards & pricing
 
 Projet réalisé dans le cadre du bloc 5 de la certification CDSD (Jedha).

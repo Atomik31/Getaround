@@ -70,10 +70,10 @@ print('...Done.')
 print(X_test[0:5,:])
 
 # Set your variables for your environment
-EXPERIMENT_NAME="getaround-mlflow-experiment"
+EXPERIMENT_NAME="getaround-pricing-v2"
 
 # Set tracking URI to your Heroku application
-os.environ["APP_URI"]="https://atomik31-mlflow.hf.space"
+os.environ["APP_URI"]="https://atomik31-mlflow-cdsd.hf.space"
 mlflow.set_tracking_uri(os.environ["APP_URI"])
 
 # Set experiment's info 
@@ -204,16 +204,45 @@ with mlflow.start_run(run_name=run_name) as run:
 print("All training is done!")
 print(f"---Total training time: {time.time()-start_time}")
 
-# Sauvegarde du meilleur modèle (GridSearchCV RF) et du preprocessor pour l'API
-print("\nSauvegarde du modèle et du preprocessor...")
-joblib.dump(model_gridrf.best_estimator_, "../FastAPI/model.joblib")
-joblib.dump(preprocessor, "../FastAPI/preprocessor.joblib")
+# Enregistrement du meilleur modèle dans le MLflow Model Registry
+print("\nEnregistrement du meilleur modèle dans le Model Registry...")
 
-with mlflow.start_run(run_name="production_model_saved"):
+from sklearn.pipeline import Pipeline as SKPipeline
+from mlflow.models.signature import infer_signature
+
+# On encapsule preprocessor + GridSearchCV RF dans un pipeline sklearn
+best_pipeline = SKPipeline([
+    ("preprocessor", preprocessor),
+    ("model", model_gridrf.best_estimator_)
+])
+
+# Reconstruction sur données brutes (avant transform)
+X_train_raw, X_test_raw, Y_train_raw, Y_test_raw = train_test_split(X, Y, test_size=0.2, random_state=42)
+
+with mlflow.start_run(run_name="production_model"):
+    best_pipeline.fit(X_train_raw, Y_train_raw)
+    Y_pred = best_pipeline.predict(X_test_raw)
+
     mlflow.log_param("model_type", "RandomForestRegressor (GridSearchCV)")
     mlflow.log_param("best_params", str(model_gridrf.best_params_))
-    mlflow.log_metric("testing_r2_score", r2_score(Y_test, model_gridrf.predict(X_test)))
-    mlflow.log_metric("testing_mae", mean_absolute_error(Y_test, model_gridrf.predict(X_test)))
-    mlflow.log_param("saved_to", "FastAPI/model.joblib + FastAPI/preprocessor.joblib")
+    mlflow.log_metric("testing_r2_score", r2_score(Y_test_raw, Y_pred))
+    mlflow.log_metric("testing_mae", mean_absolute_error(Y_test_raw, Y_pred))
 
-print("model.joblib et preprocessor.joblib sauvegardés dans FastAPI/")
+    signature = infer_signature(X_train_raw, best_pipeline.predict(X_train_raw))
+
+    mlflow.sklearn.log_model(
+        best_pipeline,
+        name="getaround_pricing_model",
+        registered_model_name="GetAround_price_predictor",
+        signature=signature,
+        input_example=X_train_raw.iloc[:3]
+    )
+
+# Promouvoir la dernière version en "production"
+from mlflow.tracking import MlflowClient
+client = MlflowClient()
+model_versions = client.get_registered_model("GetAround_price_predictor").latest_versions
+latest_version = model_versions[-1].version
+client.set_registered_model_alias("GetAround_price_predictor", "production", latest_version)
+
+print(f"Modèle version {latest_version} enregistré et promu en 'production'")

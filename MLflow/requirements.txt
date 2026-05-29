@@ -1,3 +1,5 @@
-mlflow
+mlflow==3.12.0
 boto3
 psycopg2-binary
+scikit-learn
+xgboost

@@ -1,5 +1,7 @@
+import os
+import mlflow
+import mlflow.pyfunc
 import pandas as pd
-import joblib
 import uvicorn
 from pydantic import BaseModel
 from typing import Literal, List, Union
@@ -46,9 +48,18 @@ class Car(BaseModel):
     winter_tires: bool
 
 
-# Chargement du modèle et du preprocessor au démarrage (une seule fois)
-preprocessor = joblib.load("preprocessor.joblib")
-model = joblib.load("model.joblib")
+MLFLOW_TRACKING_URI = os.getenv("MLFLOW_TRACKING_URI", "https://atomik31-mlflow.hf.space").strip()
+mlflow.set_tracking_uri(MLFLOW_TRACKING_URI)
+
+_model = None
+
+def get_model():
+    global _model
+    if _model is None:
+        print(f"Chargement du modèle depuis MLflow : {MLFLOW_TRACKING_URI}")
+        _model = mlflow.pyfunc.load_model("models:/GetAround_price_predictor@production")
+        print("Modèle chargé en mémoire.")
+    return _model
 
 
 @app.get("/", include_in_schema=False)
@@ -66,8 +77,7 @@ async def predict(cars: List[Car]):
     **Sortie** : `{"prediction": [prix_en_euros, ...]}`
     """
     car_features = pd.DataFrame(jsonable_encoder(cars))
-    car_features_transformed = preprocessor.transform(car_features)
-    prediction = model.predict(car_features_transformed)
+    prediction = get_model().predict(car_features)
     return {"prediction": prediction.tolist()}
 
 

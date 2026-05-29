@@ -2,6 +2,8 @@ fastapi
 uvicorn[standard]
 pydantic
 pandas
-scikit-learn==1.6.1
+scikit-learn
 numpy
 joblib
+mlflow
+boto3

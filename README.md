@@ -48,7 +48,7 @@ Random Forest avec GridSearchCV — R² ≈ 0.74, MAE ≈ 10.76 €/jour.
 Au démarrage, l'API charge le modèle directement depuis le **Model Registry MLflow** via l'alias `production` :
 
 ```python
-model = mlflow.sklearn.load_model("models:/GetAround_price_predictor@production")
+model = mlflow.pyfunc.load_model("models:/GetAround_price_predictor@production")
 ```
 
 Cela signifie qu'il suffit de promouvoir un nouveau modèle en `production` dans le registry pour que l'API serve automatiquement la version la plus précise — sans redéploiement. Si on affine le modèle (nouveaux hyperparamètres, feature engineering, XGBoost...), il suffit d'entraîner un nouveau run MLflow, d'enregistrer le modèle dans le registry, puis de déplacer l'alias `production` vers cette nouvelle version.

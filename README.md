@@ -1,6 +1,6 @@
 ![GetAround](GetAround_logo.png)
 
-# GetAround — Retards & pricing
+# GetAround - Retards & pricing
 
 Projet réalisé dans le cadre du bloc 5 de la certification CDSD (Jedha).
 
@@ -43,7 +43,7 @@ Comparaison de 6 modèles (LinearRegression, Ridge, Lasso, RandomForest, GridSea
 
 ## Modèle retenu
 
-Random Forest avec GridSearchCV — R² ≈ 0.74, MAE ≈ 10.76 €/jour.
+Random Forest avec GridSearchCV - R² ≈ 0.74, MAE ≈ 10.76 €/jour.
 
 Au démarrage, l'API charge le modèle directement depuis le **Model Registry MLflow** via l'alias `production` :
 
@@ -51,13 +51,13 @@ Au démarrage, l'API charge le modèle directement depuis le **Model Registry ML
 model = mlflow.pyfunc.load_model("models:/GetAround_price_predictor@production")
 ```
 
-Cela signifie qu'il suffit de promouvoir un nouveau modèle en `production` dans le registry pour que l'API serve automatiquement la version la plus précise — sans redéploiement. Si on affine le modèle (nouveaux hyperparamètres, feature engineering, XGBoost...), il suffit d'entraîner un nouveau run MLflow, d'enregistrer le modèle dans le registry, puis de déplacer l'alias `production` vers cette nouvelle version.
+Cela signifie qu'il suffit de promouvoir un nouveau modèle en `production` dans le registry pour que l'API serve automatiquement la version la plus précise - sans redéploiement. Si on affine le modèle (nouveaux hyperparamètres, feature engineering, XGBoost...), il suffit d'entraîner un nouveau run MLflow, d'enregistrer le modèle dans le registry, puis de déplacer l'alias `production` vers cette nouvelle version.
 
 ---
 
 ## Stack
 
-- Python — FastAPI, Streamlit, Scikit-learn, MLflow, Docker
+- Python - FastAPI, Streamlit, Scikit-learn, MLflow, Docker
 - Données : 21 310 locations (retards) + 4 841 voitures (pricing)
 
 ---
@@ -106,4 +106,4 @@ Deployment-GetAround/
 
 ---
 
-Julien CHARLIER — [(Github : Atomik31)](https://github.com/Atomik31)
+Julien CHARLIER - [(Github : Atomik31)](https://github.com/Atomik31)
